@@ -24,14 +24,17 @@ const dataUserScores = [
 const dataChallange ={
   challange: 'longest plank',
   desciption: 'hold a plank for as long as you can',
-  units: 'seconds',
+  units: 'Seconds',
 };
 
 export default function App() {
   let today = new Date().getDay();
   let startOfWeek = new Date();
   startOfWeek.setDate(startOfWeek.getDate() - (today - 1));
-  startOfWeek = startOfWeek.toISOString().split('T')[0];
+  let endOfWeek = new Date();
+  endOfWeek.setDate(endOfWeek.getDate() + (7 - today));
+  endOfWeek = endOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
+  startOfWeek = startOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
   
   dataUserScores.sort((a, b) => (a.score > b.score) ? -1 : 1);
 
@@ -39,9 +42,10 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Text style={styles.title}>{`ORC challange for the week of ${startOfWeek}`}</Text>
+      <Text style={styles.title}>{`ORC Fitness Challange`}</Text>
+      <Text style={styles.challange}>{`${startOfWeek} to ${endOfWeek}`}</Text>
       <Text style={styles.challange}>{`This weeks challange is: ${dataChallange.challange}`}</Text>
-      <View style={styles.item}>
+      <View style={styles.legend}>
         <Text style={styles.itemText}>{`Rank `}</Text>
         <Text style={styles.itemText}>{`${dataChallange.units}`}</Text>
       </View>
@@ -50,7 +54,7 @@ export default function App() {
         renderItem={({item, index}) =>
           <View style={styles.item}>
             <Text style={styles.itemText}>{`${index + 1}. ${item.name} `}</Text>
-            <Text style={styles.itemText}>{`${item.score} ${dataChallange.units}`}</Text>
+            <Text style={styles.itemText}>{`${item.score} `}</Text>
           </View>
         }
       />
@@ -62,41 +66,41 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#0e7695',
     paddingTop: 5,
   },
   title: {
     marginTop: 16,
     paddingVertical: 8,
-    borderWidth: 4,
-    borderColor: '#20232a',
-    borderRadius: 6,
-    backgroundColor: '#61dafb',
-    color: '#20232a',
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: 'bold',
+    color: 'white',
   },
   challange: {
-    marginTop: 16,
     paddingVertical: 8,
-    borderWidth: 4,
-    borderColor: '#20232a',
-    borderRadius: 6,
-    backgroundColor: '#61dafb',
-    color: '#20232a',
     textAlign: 'center',
     fontSize: 18,
+    color: 'white',
   },
   item: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    backgroundColor: '#61dafb',
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
   },
   itemText: {
     fontSize: 18,
   },
+  legend: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+    borderWidth: 4,
+    borderColor: '#20232a',
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    backgroundColor: '#21b0da',
+  }
 });
