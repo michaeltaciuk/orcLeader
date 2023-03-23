@@ -4,7 +4,9 @@ import {
   StyleSheet, 
   Text, 
   View,
-  SafeAreaView 
+  Pressable,
+  SafeAreaView, 
+  TextInput
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -41,7 +43,6 @@ endOfWeek = endOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeri
 startOfWeek = startOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
 
 function LeaderboardScreen() {
-  
   dataUserScores.sort((a, b) => (a.score > b.score) ? -1 : 1);
   return (
     <SafeAreaView style={styles.container}>
@@ -74,9 +75,26 @@ function SubmissionScreen() {
       <Text style={styles.title}>{`ORC Fitness Challange`}</Text>
       <Text style={styles.challange}>{`${startOfWeek} to ${endOfWeek}`}</Text>
       <Text style={styles.challange}>{`This weeks challange is: ${dataChallange.challange}`}</Text>
-      <Text>Submit your score for this weeks challage:</Text>
-      </SafeAreaView>
+      <View style={styles.submissionScreen}>
+        <Text style={styles.submissionTitle}>Submit your score for this weeks challage:</Text>
+        <View style={styles.scoreInput}>
+          <Text style={styles.scoreInputText}>{`Your Name: `}</Text>
+          <TextInput style={styles.scoreInputText} placeholder="Enter your name here" />
+        </View>
+        <View style={styles.scoreInput}>
+          <Text style={styles.scoreInputText}>{`Your Score: `}</Text>
+          <TextInput style={styles.scoreInputText} placeholder="Enter your score here" />
+        </View>
+        <Pressable style={styles.button} onPress={handleSubmission}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </Pressable>
+      </View>
+    </SafeAreaView>
   );
+}
+
+function handleSubmission() {
+  console.log('submit');
 }
 
 function Tabs() {
@@ -147,5 +165,47 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0,
     borderRightWidth: 0,
     backgroundColor: '#21b0da',
-  }
+  },
+
+  submissionScreen: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingTop: 5,
+    height: '100%',
+  },
+  submissionTitle: {
+    marginTop: 16,
+    color: '#0e7695',
+    paddingVertical: 8,
+    textAlign: 'center',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+  scoreInput: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+    backgroundColor: 'white',
+    width: '90%'
+  },
+  scoreInputText: {
+    fontSize: 18,
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#0e7695',
+    marginTop: 20,
+    width: '50%',
+  },
+  buttonText: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  },
 });
