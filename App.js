@@ -1,11 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { 
-  ScrollView, 
   FlatList,
   StyleSheet, 
   Text, 
-  View 
+  View,
+  SafeAreaView 
 } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const dataUserScores = [
   {name: 'John', score: 30},
@@ -27,20 +30,22 @@ const dataChallange ={
   units: 'Seconds',
 };
 
-export default function App() {
-  let today = new Date().getDay();
-  let startOfWeek = new Date();
-  startOfWeek.setDate(startOfWeek.getDate() - (today - 1));
-  let endOfWeek = new Date();
-  endOfWeek.setDate(endOfWeek.getDate() + (7 - today));
-  endOfWeek = endOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
-  startOfWeek = startOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
+const Tab = createBottomTabNavigator();
+
+let today = new Date().getDay();
+let startOfWeek = new Date();
+startOfWeek.setDate(startOfWeek.getDate() - (today - 1));
+let endOfWeek = new Date();
+endOfWeek.setDate(endOfWeek.getDate() + (7 - today));
+endOfWeek = endOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
+startOfWeek = startOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
+
+function LeaderboardScreen() {
   
   dataUserScores.sort((a, b) => (a.score > b.score) ? -1 : 1);
-
-
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+    
       <StatusBar style="auto" />
       <Text style={styles.title}>{`ORC Fitness Challange`}</Text>
       <Text style={styles.challange}>{`${startOfWeek} to ${endOfWeek}`}</Text>
@@ -58,8 +63,48 @@ export default function App() {
           </View>
         }
       />
+    </SafeAreaView>
+  );
+}
 
-    </View>
+function SubmissionScreen() {
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="auto" />
+      <Text style={styles.title}>{`ORC Fitness Challange`}</Text>
+      <Text style={styles.challange}>{`${startOfWeek} to ${endOfWeek}`}</Text>
+      <Text style={styles.challange}>{`This weeks challange is: ${dataChallange.challange}`}</Text>
+      <Text>Submit your score for this weeks challage:</Text>
+      </SafeAreaView>
+  );
+}
+
+function Tabs() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen 
+        name="Leaderboard" 
+        options={{headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="trophy" color={color} size={size} />
+          ),}}
+        component={LeaderboardScreen} />
+      <Tab.Screen 
+        name="Submt" 
+        options={{headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="send" color={color} size={size} />
+          ),}} 
+        component={SubmissionScreen} />
+    </Tab.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tabs />
+    </NavigationContainer>
   );
 }
 
@@ -78,7 +123,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   challange: {
-    paddingVertical: 8,
+    paddingBottom: 12,
     textAlign: 'center',
     fontSize: 18,
     color: 'white',
