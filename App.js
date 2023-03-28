@@ -12,6 +12,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import Leaderboard from './screens/Leaderboard.js';
+
 const dataUserScores = [
   {name: 'John', score: 30},
   {name: 'Bob', score: 20},
@@ -46,7 +48,6 @@ function LeaderboardScreen() {
   dataUserScores.sort((a, b) => (a.score > b.score) ? -1 : 1);
   return (
     <SafeAreaView style={styles.container}>
-    
       <StatusBar style="auto" />
       <Text style={styles.title}>{`ORC Fitness Challange`}</Text>
       <Text style={styles.challange}>{`${startOfWeek} to ${endOfWeek}`}</Text>
@@ -55,15 +56,7 @@ function LeaderboardScreen() {
         <Text style={styles.itemText}>{`Rank `}</Text>
         <Text style={styles.itemText}>{`${dataChallange.units}`}</Text>
       </View>
-      <FlatList
-        data={dataUserScores}
-        renderItem={({item, index}) =>
-          <View style={styles.item}>
-            <Text style={styles.itemText}>{`${index + 1}. ${item.name} `}</Text>
-            <Text style={styles.itemText}>{`${item.score} `}</Text>
-          </View>
-        }
-      />
+      <Leaderboard/>
     </SafeAreaView>
   );
 }
