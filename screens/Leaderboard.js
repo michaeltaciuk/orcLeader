@@ -1,5 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { 
   FlatList,
   StyleSheet,
@@ -16,6 +18,12 @@ export default function LeaderboardScreen() {
   useEffect(() => {
     getLeaderboardData();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getLeaderboardData();
+    }, [])
+  );
     
   async function getLeaderboardData() {
     try {
@@ -30,28 +38,48 @@ export default function LeaderboardScreen() {
   }
 
   return (
-    <FlatList
-      data={dataUserScores}
-      renderItem={({item, index}) =>
-        <View style={styles.item}>
-          <Text style={styles.itemText}>{`${index + 1}. ${item.name} `}</Text>
-          <Text style={styles.itemText}>{`${item.score} `}</Text>
-        </View>
-      }
-    />
+    <View style={styles.leaderboardScreen}>
+      <View style={styles.legend}>
+          <Text style={styles.itemText}>{`Rank `}</Text>
+          <Text style={styles.itemText}>{`Score`}</Text>
+      </View>
+      <FlatList
+        data={dataUserScores}
+        renderItem={({item, index}) =>
+          <View style={styles.item}>
+            <Text style={styles.itemText}>{`${index + 1}. ${item.name} `}</Text>
+            <Text style={styles.itemText}>{`${item.score} `}</Text>
+          </View>
+        }
+      />
+    </View>
   );
 }
 
-  const styles = StyleSheet.create({
-    item: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      padding: 20,
-      backgroundColor: 'white',
-      borderBottomWidth: 1,
-    },
-    itemText: {
-      fontSize: 18,
-    }
-  });
+const styles = StyleSheet.create({
+  leaderboardScreen: {
+    height: '100%',
+    backgroundColor: 'white',
+  },
+  item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+  },
+  itemText: {
+    fontSize: 18,
+  },
+  legend: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+    borderWidth: 4,
+    borderColor: '#20232a',
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    backgroundColor: '#21b0da',
+  },
+});
   

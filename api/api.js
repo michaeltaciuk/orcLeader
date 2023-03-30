@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:3001";
+const url = "http://localhost:3001/api";
 
 axios.defaults.baseURL = `${url}`;
 
@@ -12,6 +12,10 @@ const api = {
     getUserData(id) {
         console.log(`getUserData(${id})`);
         return axios.get(`/account`);
+    },
+    postUserSubmissionData(userData) {
+        console.log(`postUserSubmissionData(${userData})`);
+        return axios.post("/submit", userData);
     },
     // createUser(userData) {
     //     console.log(`createUser(${userData})`);
