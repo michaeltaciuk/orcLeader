@@ -28,7 +28,6 @@ export default function LeaderboardScreen() {
   async function getLeaderboardData() {
     try {
       const response = await api.getLeaderboardData();
-      console.log(response.data);
       let dataUserScores = response.data;
       dataUserScores.sort((a, b) => (a.score > b.score) ? -1 : 1);
       setDataUserScores(dataUserScores);
@@ -45,6 +44,7 @@ export default function LeaderboardScreen() {
       </View>
       <FlatList
         data={dataUserScores}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({item, index}) =>
           <View style={styles.item}>
             <Text style={styles.itemText}>{`${index + 1}. ${item.name} `}</Text>
