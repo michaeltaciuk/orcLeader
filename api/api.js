@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const url = "http://localhost:3001/api";
+const url = "https://lobster-app-ycavu.ondigitalocean.app/api";
+
 
 axios.defaults.baseURL = `${url}`;
 
