@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { 
-  FlatList,
   StyleSheet, 
   Text, 
   View,
@@ -16,7 +15,7 @@ import Leaderboard from './screens/Leaderboard.js';
 import Submission from './screens/SubmissionScreen';
 
 const dataChallange = {
-  challange: 'longest plank',
+  challange: 'Longest Plank',
   desciption: 'hold a plank for as long as you can',
   units: 'Seconds',
 };
@@ -31,15 +30,21 @@ endOfWeek.setDate(endOfWeek.getDate() + (7 - today));
 endOfWeek = endOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
 startOfWeek = startOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
 
-function LeaderboardScreen() {
-  
+function TitleSection() {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
+    <View>
       <Text style={styles.title}>{`ORC Fitness Challange`}</Text>
       <Text style={styles.challange}>{`${startOfWeek} to ${endOfWeek}`}</Text>
       <Text style={styles.challange}>{`This weeks challange is: ${dataChallange.challange}`}</Text>
-      
+    </View>
+  );
+}
+
+function LeaderboardScreen() {
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="auto" />
+      <TitleSection/>
       <Leaderboard/>
     </SafeAreaView>
   );
@@ -49,9 +54,7 @@ function SubmissionScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <Text style={styles.title}>{`ORC Fitness Challange`}</Text>
-      <Text style={styles.challange}>{`${startOfWeek} to ${endOfWeek}`}</Text>
-      <Text style={styles.challange}>{`This weeks challange is: ${dataChallange.challange}`}</Text>
+      <TitleSection/>
       <Submission/>
     </SafeAreaView>
   );
@@ -63,8 +66,8 @@ function Tabs() {
       <Tab.Screen 
         name="Leaderboard" 
         options={{headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="trophy" color={color} size={size} />
+          tabBarIcon: ({ focused, size }) => (
+            <MaterialCommunityIcons name="trophy" color={focused ? 'gold' : 'gray'} size={size} />
           ),}}
         component={LeaderboardScreen} />
       <Tab.Screen 

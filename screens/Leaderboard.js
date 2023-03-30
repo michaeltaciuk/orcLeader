@@ -44,7 +44,7 @@ export default function LeaderboardScreen() {
       </View>
       <FlatList
         data={dataUserScores}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item._id.toString()}
         renderItem={({item, index}) =>
           <View style={styles.item}>
             <Text style={styles.itemText}>{`${index + 1}. ${item.name} `}</Text>
