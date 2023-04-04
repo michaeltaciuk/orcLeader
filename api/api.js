@@ -2,7 +2,6 @@ import axios from "axios";
 
 const url = "https://lobster-app-ycavu.ondigitalocean.app/api";
 
-
 axios.defaults.baseURL = `${url}`;
 
 const api = {
@@ -18,17 +17,17 @@ const api = {
         console.log(`postUserSubmissionData(${userData})`);
         return axios.post("/submit", userData);
     },
-    // createUser(userData) {
-    //     console.log(`createUser(${userData})`);
-    //     return axios.post("/user/new", userData);
-    // },
-    // updateUser(userData) {
-    //     console.log(`updateUser(${userData})`);
-    //     return axios.post(`/user/${userData.email}`, userData);
-    // },
-    // deleteUser(email) {
-    //     return axios.delete(`/user/${email}`);
-    // }
+    createUser(userData) {
+        console.log(`createUser(${userData})`);
+        return axios.post("/user/create", userData);
+    },
+    getUser(email) {
+        console.log(`getUser(${email})`);
+        return axios.post(`/user`, email);
+    },
+    deleteUser(email) {
+        return axios.delete(`/user/delete`, email);
+    }
 };
 
 export default api;

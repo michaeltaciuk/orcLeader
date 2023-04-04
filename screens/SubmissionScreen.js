@@ -1,19 +1,26 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View, TextInput, Pressable, ScrollView } from "react-native";
-import useStore from '../store';
 
 import api from "../api/api.js";
 
 export default function SubmissionScreen() {
     const [name, setName] = useState("");
+    const [nameString, setNameString] = useState("Please enter your name");
     const [score, setScore] = useState(0);
 
     const [dataUserSubmission, setDataUserSubmission] = useState([]);
+    
 
-//   useEffect(() => {
-//     getUserSubmissionData();
-//   }, []);
+  useEffect(() => {
+    console.log("SubmissionScreen useEffect");
+    const realName = useStore((state) => state.userName);
+    if (realName) {
+        setName(realName);
+        setNameString(realName);
+    }
+    getUserSubmissionData();
+  }, []);
 
     async function handleSubmitPress() {
         console.log("handleSubmitPress");
@@ -54,7 +61,7 @@ export default function SubmissionScreen() {
         <Text style={styles.scoreInputText}>{`Your Name: `}</Text>
         <TextInput
           style={styles.scoreInputText}
-          placeholder="Enter your name here"
+          placeholder={nameString}
           onChangeText={(text) => setName(text)}
         />
       </View>
