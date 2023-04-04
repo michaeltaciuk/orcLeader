@@ -6,6 +6,8 @@ import {
   FlatList,
   StyleSheet,
   Text, 
+  RefreshControl,
+  ActivityIndicator,
   View,
 } from 'react-native';
 
@@ -14,16 +16,20 @@ import api from '../api/api.js';
 export default function LeaderboardScreen() {
 
   const [dataUserScores, setDataUserScores] = useState([]);
+  const [refreshing, setRefreshing] = useState(true);
 
   useEffect(() => {
+    console.log('This only runs once');
     getLeaderboardData();
   }, []);
 
   useFocusEffect(
     React.useCallback(() => {
+      console.log('This runs every time the screen is focused');
       getLeaderboardData();
     }, [])
   );
+  
     
   async function getLeaderboardData() {
     try {
@@ -31,6 +37,7 @@ export default function LeaderboardScreen() {
       let dataUserScores = response.data;
       dataUserScores.sort((a, b) => (a.score > b.score) ? -1 : 1);
       setDataUserScores(dataUserScores);
+      setRefreshing(false);
     } catch (error) {
       console.log(error.message);
     }
@@ -42,9 +49,13 @@ export default function LeaderboardScreen() {
           <Text style={styles.itemText}>{`Rank `}</Text>
           <Text style={styles.itemText}>{`Score`}</Text>
       </View>
+      {refreshing ? <ActivityIndicator /> : null}
       <FlatList
         data={dataUserScores}
         keyExtractor={(item) => item._id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={getLeaderboardData} />
+        }
         renderItem={({item, index}) =>
           <View style={styles.item}>
             <Text style={styles.itemText}>{`${index + 1}. ${item.name} `}</Text>

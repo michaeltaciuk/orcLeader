@@ -2,7 +2,7 @@
   "expo": {
     "name": "orcLeader",
     "slug": "orcLeader",
-    "version": "1.0.0",
+    "version": "0.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.michaeltaciuk.orcleaderboard"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +26,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "879bcb38-e6de-49ca-a1ff-cd81c3b2fcfd"
+      }
+    },
+    "plugins": ["expo-apple-authentication"]
   }
 }

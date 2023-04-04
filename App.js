@@ -1,9 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
 import { 
   StyleSheet, 
   Text, 
   View,
-  Pressable,
+  Keyboard,
+  TouchableWithoutFeedback,
   SafeAreaView, 
   TextInput
 } from 'react-native';
@@ -13,6 +15,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Leaderboard from './screens/Leaderboard.js';
 import Submission from './screens/SubmissionScreen';
+import SignIn from './screens/SignInScreen.js';
 
 const dataChallange = {
   challange: 'Longest Plank',
@@ -31,6 +34,11 @@ endOfWeek = endOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeri
 startOfWeek = startOfWeek.toLocaleDateString('default', {month: 'long', day: 'numeric'});
 
 function TitleSection() {
+
+  useEffect(() => {
+    console.log('TitleSection useEffect');
+  }, []);
+
   return (
     <View>
       <Text style={styles.title}>{`ORC Fitness Challange`}</Text>
@@ -52,11 +60,13 @@ function LeaderboardScreen() {
 
 function SubmissionScreen() {
   return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <TitleSection/>
       <Submission/>
     </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -82,6 +92,22 @@ function Tabs() {
 }
 
 export default function App() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  const handleSignIn = (result) => {
+    console.log({result});
+    setIsSignedIn(true);
+  };
+
+  // Render the sign-in screen if the user is not signed in
+  if (!isSignedIn) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <SignIn onSignIn={handleSignIn} />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <NavigationContainer>
       <Tabs />

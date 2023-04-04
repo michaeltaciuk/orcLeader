@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View, TextInput, Pressable } from "react-native";
+import { FlatList, StyleSheet, Text, View, TextInput, Pressable, ScrollView } from "react-native";
+import useStore from '../store';
 
 import api from "../api/api.js";
 
@@ -61,6 +62,7 @@ export default function SubmissionScreen() {
         <Text style={styles.scoreInputText}>{`Your Score: `}</Text>
         <TextInput
           style={styles.scoreInputText}
+          keyboardType='numeric'
           placeholder="Enter your score here"
           onChangeText={(text) => setScore(text)}
         />
