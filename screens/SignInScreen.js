@@ -1,50 +1,75 @@
+import React, { useEffect, useState, useRef } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Platform,
+  Animated
+} from "react-native";
+import * as AppleAuthentication from "expo-apple-authentication";
 
-import React from 'react';
-import { StyleSheet, Text, View, Image, Button, Platform, Pressable } from 'react-native';
-import * as AppleAuthentication from 'expo-apple-authentication';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwtDecode from "jwt-decode";
+import api from "../api/api.js";
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwtDecode from 'jwt-decode';
-import api from '../api/api.js';
-
-import orcLogo from '../assets/orcLogo.png';
+import orcLogo from "../assets/orcLogo.png";
 
 async function handleSignIn(credential) {
-  if (credential.fullName.givenName && credential.fullName.familyName){
-    console.log(`${credential.fullName.givenName} ${credential.fullName.familyName}`);
-    storeUserName(`${credential.fullName.givenName} ${credential.fullName.familyName}`);
+  if (credential.fullName.givenName && credential.fullName.familyName) {
+    console.log(
+      `${credential.fullName.givenName} ${credential.fullName.familyName}`
+    );
+    storeUserName(
+      `${credential.fullName.givenName} ${credential.fullName.familyName}`
+    );
     const email = jwtDecode(credential.identityToken);
-
-  }else if (credential.fullName.givenName) {
+  } else if (credential.fullName.givenName) {
     storeUserName(`${credential.fullName.givenName}`);
-  }else if (credential.fullName.familyName) {
+  } else if (credential.fullName.familyName) {
     storeUserName(`${credential.fullName.familyName}`);
-  }else {
+  } else {
     console.log("No name provided");
-  // const response = await api.postUserSubmissionData({id: 1, name: name, score: score});
-  // const decoded = jwtDecode(credential.identityToken);
+    // const response = await api.postUserSubmissionData({id: 1, name: name, score: score});
+    // const decoded = jwtDecode(credential.identityToken);
   }
 }
 
 const storeUserName = async (value) => {
   try {
-    await AsyncStorage.setItem('@user_name', value)
+    await AsyncStorage.setItem("@user_name", value);
   } catch (e) {
     // saving error
   }
-}
-
+};
 
 const SignInScreen = ({ onSignIn }) => {
 
-  if (Platform.OS === 'ios') {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  if (Platform.OS === "ios") {
     return (
       <View style={styles.container}>
-
         <Text style={styles.title}>ORC Weekly Fitness Challange</Text>
-        
-        <Image source={orcLogo} style={{ width: 200, height: 200 }} />
-        
+
+        <Animated.View
+          style={[
+            styles.fadingContainer,
+            {
+              opacity: fadeAnim,
+            },
+          ]}>
+          <Image source={orcLogo} style={{ width: 300, height: 300 }} />
+        </Animated.View>
+
         <AppleAuthentication.AppleAuthenticationButton
           buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
@@ -60,7 +85,7 @@ const SignInScreen = ({ onSignIn }) => {
               handleSignIn(credential);
               onSignIn();
             } catch (e) {
-              if (e.code === 'ERR_REQUEST_CANCELED') {
+              if (e.code === "ERR_REQUEST_CANCELED") {
                 // handle that the user canceled the sign-in flow
               } else {
                 // handle other errors
@@ -85,19 +110,21 @@ const SignInScreen = ({ onSignIn }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingTop: 50,
     paddingBottom: 100,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 40,
+    fontWeight: "bold",
     marginBottom: 20,
+    color: "white",
+    textAlign: "center",
   },
   appleButton: {
-    width: '80%',
-    height: 45,
+    width: "80%",
+    height: 60,
   },
 });
 

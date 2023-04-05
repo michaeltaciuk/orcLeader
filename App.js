@@ -6,8 +6,7 @@ import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
-  SafeAreaView, 
-  TextInput
+  SafeAreaView,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
