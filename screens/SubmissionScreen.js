@@ -5,6 +5,8 @@ import {
   View,
   TextInput,
   Pressable,
+  Alert,
+  Keyboard,
   Animated,
 } from "react-native";
 
@@ -28,15 +30,14 @@ export default function SubmissionScreen() {
     if (name === "" || score === 0) {
       alert("Please enter your name and score");
     } else {
-      console.log(name);
-      console.log(score);
       try {
         const response = await api.postUserSubmissionData({
           id: 1,
           name: name,
           score: score,
         });
-        alert(`Your score has been submitted!`);
+        Alert.alert(`Success!`, `Your score has been submitted.`);
+        Keyboard.dismiss();
         setDataUserSubmission({ id: 1, name: name, score: score });
       } catch (error) {
         console.log(error.message);
@@ -45,7 +46,6 @@ export default function SubmissionScreen() {
   }
 
   async function getUserSubmissionData() {
-    console.log("getUserSubmissionData");
     try {
       const response = await api.getUserSubmissionData();
       console.log(response.data);
