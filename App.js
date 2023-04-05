@@ -16,11 +16,7 @@ import Leaderboard from './screens/Leaderboard.js';
 import Submission from './screens/SubmissionScreen';
 import SignIn from './screens/SignInScreen.js';
 
-const dataChallange = {
-  challange: 'Longest Plank',
-  desciption: 'hold a plank for as long as you can',
-  units: 'Seconds',
-};
+import api from './api/api.js';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,9 +30,25 @@ startOfWeek = startOfWeek.toLocaleDateString('default', {month: 'long', day: 'nu
 
 function TitleSection() {
 
+  const [dataChallange, setDataChallange] = useState({
+    challange: '-NO DATA-',
+    desciption: '-NO DATA-',
+    units: '-NO DATA-',
+  });
+
   useEffect(() => {
-    
+    getChallengeData();
   }, []);
+
+  async function getChallengeData() {
+    try {
+      const response = await api.getChallengeData();
+      let dataChallange = response.data;
+      setDataChallange(dataChallange);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   return (
     <View>
