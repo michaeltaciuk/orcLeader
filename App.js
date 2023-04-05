@@ -36,7 +36,7 @@ startOfWeek = startOfWeek.toLocaleDateString('default', {month: 'long', day: 'nu
 function TitleSection() {
 
   useEffect(() => {
-    console.log('TitleSection useEffect');
+    
   }, []);
 
   return (
@@ -94,8 +94,7 @@ function Tabs() {
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
 
-  const handleSignIn = (result) => {
-    console.log({result});
+  const handleSignIn = () => {
     setIsSignedIn(true);
   };
 

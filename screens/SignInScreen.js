@@ -3,21 +3,35 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, Button, Platform, Pressable } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
 import api from '../api/api.js';
 
 import orcLogo from '../assets/orcLogo.png';
 
 async function handleSignIn(credential) {
-  console.log(`login: ${JSON.stringify(credential)}`);
-  if (credential.fullName.givenName || credential.fullName.familyName){
-    console.log(`fullname: ${credential.fullName.givenName} + ${credential.fullName.familyName}`);
+  if (credential.fullName.givenName && credential.fullName.familyName){
+    console.log(`${credential.fullName.givenName} ${credential.fullName.familyName}`);
+    storeUserName(`${credential.fullName.givenName} ${credential.fullName.familyName}`);
+    const email = jwtDecode(credential.identityToken);
+
+  }else if (credential.fullName.givenName) {
+    storeUserName(`${credential.fullName.givenName}`);
+  }else if (credential.fullName.familyName) {
+    storeUserName(`${credential.fullName.familyName}`);
   }else {
-    const decoded = jwtDecode(credential.identityToken);
-    console.log(`decoded: ${decoded.email}`);
-  }
+    console.log("No name provided");
   // const response = await api.postUserSubmissionData({id: 1, name: name, score: score});
+  // const decoded = jwtDecode(credential.identityToken);
+  }
+}
+
+const storeUserName = async (value) => {
+  try {
+    await AsyncStorage.setItem('@user_name', value)
+  } catch (e) {
+    // saving error
+  }
 }
 
 
@@ -29,9 +43,7 @@ const SignInScreen = ({ onSignIn }) => {
 
         <Text style={styles.title}>ORC Weekly Fitness Challange</Text>
         
-        <Pressable onPress={() => {onSignIn()}}>
-          <Image source={orcLogo} style={{ width: 200, height: 200 }} />
-        </Pressable>
+        <Image source={orcLogo} style={{ width: 200, height: 200 }} />
         
         <AppleAuthentication.AppleAuthenticationButton
           buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}

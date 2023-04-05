@@ -1,56 +1,80 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View, TextInput, Pressable, ScrollView } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  ScrollView,
+} from "react-native";
 
 import api from "../api/api.js";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function SubmissionScreen() {
-    const [name, setName] = useState("");
-    const [nameString, setNameString] = useState("Please enter your name");
-    const [score, setScore] = useState(0);
+  const [name, setName] = useState("");
+  const [nameString, setNameString] = useState("Please enter your name");
+  const [score, setScore] = useState(0);
 
-    const [dataUserSubmission, setDataUserSubmission] = useState([]);
-    
+  const [dataUserSubmission, setDataUserSubmission] = useState([]);
 
   useEffect(() => {
     console.log("SubmissionScreen useEffect");
-    const realName = useStore((state) => state.userName);
-    if (realName) {
-        setName(realName);
-        setNameString(realName);
-    }
+    getUserName();
     getUserSubmissionData();
   }, []);
 
-    async function handleSubmitPress() {
-        console.log("handleSubmitPress");
-        if(name === "" || score === 0) {
-            console.log("Please enter your name and score");
-            alert("Please enter your name and score");
-        }else {
-            console.log(name);
-            console.log(score);
-            try {
-                const response = await api.postUserSubmissionData({id: 1, name: name, score: score});
-                console.log(response.data);
-                setDataUserSubmission({id: 1, name: name, score: score});
-            } catch (error) {
-                console.log(error.message);
-            }
-        }
+  async function handleSubmitPress() {
+    console.log("handleSubmitPress");
+    if (name === "" || score === 0) {
+      alert("Please enter your name and score");
+    } else {
+      console.log(name);
+      console.log(score);
+      try {
+        const response = await api.postUserSubmissionData({
+          id: 1,
+          name: name,
+          score: score,
+        });
+        alert(`Your score has been submitted!`);
+        setDataUserSubmission({ id: 1, name: name, score: score });
+      } catch (error) {
+        console.log(error.message);
+      }
     }
+  }
 
-    async function getUserSubmissionData() {
-        console.log("getUserSubmissionData");
-        try {
-            const response = await api.getUserSubmissionData();
-            console.log(response.data);
-            let dataUserSubmission = response.data;
-            setDataUserSubmission(dataUserSubmission);
-        } catch (error) {
-            console.log(error.message);
-        }
+  async function getUserSubmissionData() {
+    console.log("getUserSubmissionData");
+    try {
+      const response = await api.getUserSubmissionData();
+      console.log(response.data);
+      let dataUserSubmission = response.data;
+      setDataUserSubmission(dataUserSubmission);
+    } catch (error) {
+      console.log(error.message);
     }
+  }
+
+  const getUserName = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@user_name')
+      if(value !== null) {
+        console.log("----------Name found----------");
+        console.log(value);
+        setName(value);
+        setNameString(value);
+      }else {
+        console.log("No name found");
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
 
   return (
     <View style={styles.submissionScreen}>
@@ -62,6 +86,8 @@ export default function SubmissionScreen() {
         <TextInput
           style={styles.scoreInputText}
           placeholder={nameString}
+          value={name === "" ? null : name}
+          editable={name === "" ? true : false}
           onChangeText={(text) => setName(text)}
         />
       </View>
@@ -69,7 +95,7 @@ export default function SubmissionScreen() {
         <Text style={styles.scoreInputText}>{`Your Score: `}</Text>
         <TextInput
           style={styles.scoreInputText}
-          keyboardType='numeric'
+          keyboardType="numeric"
           placeholder="Enter your score here"
           onChangeText={(text) => setScore(text)}
         />

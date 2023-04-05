@@ -9,6 +9,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   View,
+  ScrollView,
 } from 'react-native';
 
 import api from '../api/api.js';
@@ -19,7 +20,6 @@ export default function LeaderboardScreen() {
   const [refreshing, setRefreshing] = useState(true);
 
   useEffect(() => {
-    console.log('This only runs once');
     getLeaderboardData();
   }, []);
 
@@ -52,7 +52,7 @@ export default function LeaderboardScreen() {
       {refreshing ? <ActivityIndicator /> : null}
       <FlatList
         data={dataUserScores}
-        keyExtractor={(item) => item._id.toString()}
+        keyExtractor={(item, index) => `${item._id}_${index}`}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={getLeaderboardData} />
         }
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
   leaderboardScreen: {
     height: '100%',
     backgroundColor: 'white',
+    flex: 1,
   },
   item: {
     flexDirection: 'row',
