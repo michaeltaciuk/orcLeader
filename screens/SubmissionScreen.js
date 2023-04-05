@@ -1,13 +1,11 @@
-import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
-  FlatList,
   StyleSheet,
   Text,
   View,
   TextInput,
   Pressable,
-  ScrollView,
+  Animated,
 } from "react-native";
 
 import api from "../api/api.js";
@@ -18,11 +16,9 @@ export default function SubmissionScreen() {
   const [name, setName] = useState("");
   const [nameString, setNameString] = useState("Please enter your name");
   const [score, setScore] = useState(0);
-
   const [dataUserSubmission, setDataUserSubmission] = useState([]);
 
   useEffect(() => {
-    console.log("SubmissionScreen useEffect");
     getUserName();
     getUserSubmissionData();
   }, []);
@@ -64,8 +60,6 @@ export default function SubmissionScreen() {
     try {
       const value = await AsyncStorage.getItem('@user_name')
       if(value !== null) {
-        console.log("----------Name found----------");
-        console.log(value);
         setName(value);
         setNameString(value);
       }else {
@@ -75,6 +69,26 @@ export default function SubmissionScreen() {
       console.log(e);
     }
   }
+
+  const animatedButtonScale = new Animated.Value(1);
+
+  const onPressIn = () => {
+      Animated.spring(animatedButtonScale, {
+          toValue: 1.5,
+          useNativeDriver: true,
+      }).start();
+  };
+
+  const onPressOut = () => {
+      Animated.spring(animatedButtonScale, {
+          toValue: 1,
+          useNativeDriver: true,
+      }).start();
+  };
+
+  const animatedScaleStyle = {
+      transform: [{scale: animatedButtonScale}],
+  };
 
   return (
     <View style={styles.submissionScreen}>
@@ -97,12 +111,14 @@ export default function SubmissionScreen() {
           style={styles.scoreInputText}
           keyboardType="numeric"
           placeholder="Enter your score here"
-          onChangeText={(text) => setScore(text)}
+          onChangeText={(text) => setScore(parseInt(text, 10) || 0)}
         />
       </View>
-      <Pressable style={styles.button} onPress={handleSubmitPress}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </Pressable>
+      <Animated.View style={[styles.buttonAnimationContainer, animatedScaleStyle]}>
+        <Pressable style={styles.button} onPress={handleSubmitPress} onPressIn={onPressIn} onPressOut={onPressOut}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </Pressable>
+      </Animated.View>
     </View>
   );
 }
@@ -132,6 +148,11 @@ const styles = StyleSheet.create({
   scoreInputText: {
     fontSize: 18,
   },
+  buttonAnimationContainer: {
+    borderRadius: 4,
+    elevation: 3,
+    alignItems: "center",
+  },
   button: {
     alignItems: "center",
     justifyContent: "center",
@@ -140,7 +161,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     backgroundColor: "#0e7695",
     marginTop: 20,
-    width: "50%",
+    width: 200,
   },
   buttonText: {
     fontSize: 16,
