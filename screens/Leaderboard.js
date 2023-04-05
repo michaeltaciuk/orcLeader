@@ -25,7 +25,6 @@ export default function LeaderboardScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log('This runs every time the screen is focused');
       getLeaderboardData();
     }, [])
   );

@@ -17,21 +17,20 @@ import orcLogo from "../assets/orcLogo.png";
 
 async function handleSignIn(credential) {
   if (credential.fullName.givenName && credential.fullName.familyName) {
-    console.log(
-      `${credential.fullName.givenName} ${credential.fullName.familyName}`
-    );
-    storeUserName(
-      `${credential.fullName.givenName} ${credential.fullName.familyName}`
-    );
+    storeUserName(`${credential.fullName.givenName} ${credential.fullName.familyName}`);
     const email = jwtDecode(credential.identityToken);
+    storeUserEmail(email.email);
   } else if (credential.fullName.givenName) {
     storeUserName(`${credential.fullName.givenName}`);
+    const email = jwtDecode(credential.identityToken);
+    storeUserEmail(email.email);
   } else if (credential.fullName.familyName) {
     storeUserName(`${credential.fullName.familyName}`);
+    const email = jwtDecode(credential.identityToken);
+    storeUserEmail(email.email);
   } else {
-    console.log("No name provided");
-    // const response = await api.postUserSubmissionData({id: 1, name: name, score: score});
-    // const decoded = jwtDecode(credential.identityToken);
+    const email = jwtDecode(credential.identityToken);
+    storeUserEmail(email.email);
   }
 }
 
@@ -39,7 +38,15 @@ const storeUserName = async (value) => {
   try {
     await AsyncStorage.setItem("@user_name", value);
   } catch (e) {
-    // saving error
+    console.log(e);
+  }
+};
+
+const storeUserEmail = async (value) => {
+  try {
+    await AsyncStorage.setItem("@user_email", value);
+  } catch (e) {
+    console.log(e);
   }
 };
 
