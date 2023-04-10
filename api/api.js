@@ -1,8 +1,9 @@
 import axios from "axios";
 
-const url = "https://lobster-app-ycavu.ondigitalocean.app/api";
+import { API_URL } from '@env';
+// const API_URL = "http://localhost:3001";
 
-axios.defaults.baseURL = `${url}`;
+axios.defaults.baseURL = `${API_URL}/api`;
 
 const api = {
     getLeaderboardData() {
@@ -11,20 +12,15 @@ const api = {
     getChallengeData() {
         return axios.get("/challange");
     },
-    getUserData(id) {
-        return axios.get(`/account`);
-    },
     postUserSubmissionData(userData) {
         return axios.post("/submit", userData);
     },
-    createUser(userData) {
-        return axios.post("/user/create", userData);
+    getUserSubmissions(userName) {
+        console.log(`getUserSubmissions: ${userName}`);
+        return axios.post(`/usersubmissions`, {userName});
     },
-    getUser(email) {
-        return axios.post(`/user`, email);
-    },
-    deleteUser(email) {
-        return axios.delete(`/user/delete`, email);
+    deleteUserSubmissions(userName) {
+        return axios.delete(`/deleteuser`, {userName});
     }
 };
 

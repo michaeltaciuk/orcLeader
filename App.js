@@ -15,6 +15,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Leaderboard from './screens/Leaderboard.js';
 import Submission from './screens/SubmissionScreen';
 import SignIn from './screens/SignInScreen.js';
+import Account from './screens/AccountScreen.js';
 
 import api from './api/api.js';
 
@@ -59,6 +60,15 @@ function TitleSection() {
   );
 }
 
+function AccountScreen() {
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="auto" />
+      <Account/>
+    </SafeAreaView>
+  );
+}
+
 function LeaderboardScreen() {
   return (
     <SafeAreaView style={styles.container}>
@@ -98,6 +108,13 @@ function Tabs() {
             <MaterialCommunityIcons name="send" color={color} size={size} />
           ),}} 
         component={SubmissionScreen} />
+      <Tab.Screen 
+        name="Account" 
+        options={{headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account" color={color} size={size} />
+          ),}} 
+        component={AccountScreen} />
     </Tab.Navigator>
   );
 }
