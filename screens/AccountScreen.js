@@ -42,7 +42,7 @@ const AccountScreen = () => {
     try {
     console.log(`getUserSubmissionData: ${name}`);
       const response = await api.getUserSubmissions(name);
-      console.log(response.data);
+      console.log(`------response------${response.data}`);
       let userSubmissions = response.data;
       setUserSubmissions(userSubmissions);
     } catch (error) {
@@ -52,16 +52,20 @@ const AccountScreen = () => {
 
   async function handleDeleteAccount() {
     console.log("Handle Delete Account");
-    if (!userName || !userEmail) {
-      alert("No Account Info");
-    } else {
-      try {
-        await api.deleteUserSubmissions(userName);
-        Alert.alert(`Your submissions have been deleted.`);
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
+    // if (!userName || !userEmail) {
+    //   alert("No Account Info");
+    // } else {
+    //   try {
+    //     await api.deleteUserSubmissions(userName);
+    //     Alert.alert(`Your submissions have been deleted.`);
+    //   } catch (error) {
+    //     console.log(error.message);
+    //   }
+    // }
+  }
+
+  async function handleDeleteSubmission(_id) {
+    console.log("Handle Delete Submission");
   }
 
   const animatedButtonScale = new Animated.Value(1);
@@ -86,39 +90,49 @@ const AccountScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>User Information</Text>
-      <Text style={styles.userInfo}>Name: {userName}</Text>
-      <Text style={styles.userInfo}>Email: {userEmail}</Text>
-      <Text style={styles.title}>Your Submissions</Text>
+        <View style={styles.header}>
+            <Text style={styles.title}>User Information</Text>
+            <Text style={styles.userInfo}>Name: {userName}</Text>
+            <Text style={styles.userInfo}>Email: {userEmail}</Text>
+            <Text style={styles.title}>Your Submissions:</Text>
+        </View>
       {userSubmissions.length > 0 ? (
-        <>
           <FlatList
             data={userSubmissions}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item._id.toString()}
             renderItem={({ item }) => (
+                console.log(item),
               <View style={styles.item}>
                 <Text style={styles.itemText}>
                   {item.name} - {item.score}
                 </Text>
+                <Animated.View style={[styles.buttonAnimationContainer, animatedScaleStyle]}>
+                    <Pressable
+                        style={styles.buttonSubmission}
+                        onPress={handleDeleteAccount}
+                        onPressIn={onPressIn}
+                        onPressOut={onPressOut} >
+                        <Text style={styles.buttonText}>Delete</Text>
+                    </Pressable>
+                </Animated.View>
               </View>
             )}
           />
-          <Animated.View
+      ) : (
+        <Text style={styles.title}>No submissions yet</Text>
+        
+      )}
+        <Animated.View
             style={[styles.buttonAnimationContainer, animatedScaleStyle]}
           >
             <Pressable
               style={styles.button}
               onPress={handleDeleteAccount}
               onPressIn={onPressIn}
-              onPressOut={onPressOut}
-            >
-              <Text style={styles.buttonText}>Delete Submissions</Text>
-            </Pressable>
+              onPressOut={onPressOut} >
+            <Text style={styles.buttonText}>Delete Account</Text>
+        </Pressable>
           </Animated.View>
-        </>
-      ) : (
-        <Text style={styles.title}>No submissions yet</Text>
-      )}
     </View>
   );
 };
@@ -126,10 +140,14 @@ const AccountScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
     backgroundColor: "white",
   },
+  header: {
+    height: 200,
+    alignItems: "center",
+    justifyContent: "center",
+    },
+
   title: {
     marginTop: 20,
     fontSize: 24,
@@ -142,6 +160,16 @@ const styles = StyleSheet.create({
     color: "#0e7695",
     fontWeight: "bold",
     marginBottom: 20,
+  },
+  item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+  },
+  itemText: {
+    fontSize: 18,
   },
   buttonAnimationContainer: {
     alignItems: "center",
@@ -156,9 +184,19 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: "#0e7695",
-    marginTop: 20,
+    backgroundColor: "red",
+    marginBottom: 20,
     width: 200,
+  },
+  buttonSubmission: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "red",
+    marginBottom: 20,
+    width: 100,
   },
   buttonText: {
     fontSize: 16,
