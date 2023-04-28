@@ -61,11 +61,10 @@ function TitleSection() {
 }
 
 function AccountScreen() {
-  const { handleSignOut } = useContext(AuthContext);
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <Account onSignOut={handleSignOut} />
+      <Account />
     </SafeAreaView>
   );
 }
