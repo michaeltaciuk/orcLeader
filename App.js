@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext, createContext } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -61,10 +61,11 @@ function TitleSection() {
 }
 
 function AccountScreen() {
+  const { handleSignOut } = useContext(AuthContext);
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <Account/>
+      <Account onSignOut={handleSignOut} />
     </SafeAreaView>
   );
 }
@@ -114,7 +115,7 @@ function Tabs() {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" color={color} size={size} />
           ),}} 
-        component={AccountScreen} />
+      component={AccountScreen} />
     </Tab.Navigator>
   );
 }
@@ -124,6 +125,10 @@ export default function App() {
 
   const handleSignIn = () => {
     setIsSignedIn(true);
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
   };
 
   // Render the sign-in screen if the user is not signed in
@@ -137,7 +142,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Tabs />
+      <Tabs/>
     </NavigationContainer>
   );
 }

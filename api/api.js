@@ -20,7 +20,11 @@ const api = {
         return axios.post(`/usersubmissions`, {userName});
     },
     deleteUserSubmissions(userName) {
-        return axios.delete(`/deleteuser`, {userName});
+        console.log(`---deleteUserSubmissions: ${userName}`);
+        return axios.post(`/deleteuser`, {userName: userName});
+    },
+    deleteSpecificUserSubmission(id) {
+        return axios.post(`/deletesubmission`, {submissionId: id});
     }
 };
 

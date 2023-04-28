@@ -11,28 +11,36 @@ import * as AppleAuthentication from "expo-apple-authentication";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
-import api from "../api/api.js";
 
 import orcLogo from "../assets/orcLogo.png";
 
 async function handleSignIn(credential) {
+  //console.log(credential)
   if (credential.fullName.givenName && credential.fullName.familyName) {
     storeUserName(`${credential.fullName.givenName} ${credential.fullName.familyName}`);
-    const email = jwtDecode(credential.identityToken);
-    storeUserEmail(email.email);
   } else if (credential.fullName.givenName) {
     storeUserName(`${credential.fullName.givenName}`);
-    const email = jwtDecode(credential.identityToken);
-    storeUserEmail(email.email);
   } else if (credential.fullName.familyName) {
     storeUserName(`${credential.fullName.familyName}`);
-    const email = jwtDecode(credential.identityToken);
-    storeUserEmail(email.email);
-  } else {
+  }
+
+  if (credential) {
+    const { authorizationCode } = credential;
+    storeAuthorizationCode(authorizationCode);
     const email = jwtDecode(credential.identityToken);
     storeUserEmail(email.email);
   }
+
+  
 }
+
+const storeAuthorizationCode = async (value) => {
+  try {
+    await AsyncStorage.setItem("@authorization_code", value);
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 const storeUserName = async (value) => {
   try {

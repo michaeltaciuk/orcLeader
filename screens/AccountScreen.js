@@ -6,31 +6,37 @@ import {
     StyleSheet, 
     Animated, 
     Pressable,
-    FlatList } from "react-native";
+    FlatList,
+    Alert
+  } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 
 import api from "../api/api.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const AccountScreen = () => {
+const AccountScreen = ({ onSignOut }) => {
   const [userName, setUserName] = useState([]);
   const [userEmail, setUserEmail] = useState([]);
+
   const [userSubmissions, setUserSubmissions] = useState([]);
 
-  useEffect(() => {
-    getUserInfo();
-  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getUserInfo();
+    }, [])
+  );
 
   const getUserInfo = async () => {
     try {
       const userEmailString = await AsyncStorage.getItem("@user_email");
       const userNameString = await AsyncStorage.getItem("@user_name");
+
       if (userEmailString !== null) {
-        const email = userEmailString;
-        setUserEmail(email);
+        setUserEmail(userEmailString);
       }
       if (userNameString !== null) {
-        const name = userNameString;
-        setUserName(name);
+        setUserName(userNameString);
       }
       getUserSubmissionData(userNameString);
     } catch (error) {
@@ -50,22 +56,39 @@ const AccountScreen = () => {
     }
   }
 
-  async function handleDeleteAccount() {
-    console.log("Handle Delete Account");
-    // if (!userName || !userEmail) {
-    //   alert("No Account Info");
-    // } else {
-    //   try {
-    //     await api.deleteUserSubmissions(userName);
-    //     Alert.alert(`Your submissions have been deleted.`);
-    //   } catch (error) {
-    //     console.log(error.message);
-    //   }
-    // }
+  async function handleDeleteAccount({ onSignOut }) {
+    
+    Alert.alert('Delete Account', 'Are you sure you want to delete your Account?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Delete Account Cancelled'),
+        style: 'cancel',
+      },
+      {text: 'Yes', onPress: () => {
+        userSubmissions.forEach((submission) => {
+          handleDeleteSubmission(submission._id);
+        });
+        clearLocalStorage();
+        //onSignOut();
+      }},
+    ]);
   }
 
-  async function handleDeleteSubmission(_id) {
-    console.log("Handle Delete Submission");
+  async function clearLocalStorage() {
+    try {
+      await AsyncStorage.clear();
+      console.log("AsyncStorage cleared");
+      setUserName(null);
+      setUserEmail(null);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async function handleDeleteSubmission(id) {
+    console.log(`Handle Delete Submission ${id}`);
+    const response = await api.deleteSpecificUserSubmission(id);
+    getUserSubmissionData(userName);
   }
 
   const animatedButtonScale = new Animated.Value(1);
@@ -91,10 +114,17 @@ const AccountScreen = () => {
   return (
     <View style={styles.container}>
         <View style={styles.header}>
-            <Text style={styles.title}>User Information</Text>
-            <Text style={styles.userInfo}>Name: {userName}</Text>
-            <Text style={styles.userInfo}>Email: {userEmail}</Text>
-            <Text style={styles.title}>Your Submissions:</Text>
+            <Text style={styles.title}>User Information:</Text>
+            {userName !== null && userEmail !== null ? (
+              <>
+              <Text style={styles.userInfo}>Name: {userName}</Text>
+              <Text style={styles.userInfo}>Email: {userEmail}</Text>
+              </>
+            ) : (
+            <Text style={styles.userInfo}>No user information found</Text>
+            )}
+
+          <Text style={styles.title}>Your Submissions:</Text>
         </View>
       {userSubmissions.length > 0 ? (
           <FlatList
@@ -109,7 +139,7 @@ const AccountScreen = () => {
                 <Animated.View style={[styles.buttonAnimationContainer, animatedScaleStyle]}>
                     <Pressable
                         style={styles.buttonSubmission}
-                        onPress={handleDeleteAccount}
+                        onPress={() => handleDeleteSubmission(item._id.toString())}
                         onPressIn={onPressIn}
                         onPressOut={onPressOut} >
                         <Text style={styles.buttonText}>Delete</Text>
@@ -127,7 +157,7 @@ const AccountScreen = () => {
           >
             <Pressable
               style={styles.button}
-              onPress={handleDeleteAccount}
+              onPress={() => handleDeleteAccount({onSignOut})}
               onPressIn={onPressIn}
               onPressOut={onPressOut} >
             <Text style={styles.buttonText}>Delete Account</Text>

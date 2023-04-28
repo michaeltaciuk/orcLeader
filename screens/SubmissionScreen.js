@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import {
   StyleSheet,
@@ -10,6 +11,7 @@ import {
   Animated,
   FlatList,
 } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 
 import api from "../api/api.js";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,12 +21,15 @@ export default function SubmissionScreen() {
   const [name, setName] = useState("");
   const [nameString, setNameString] = useState("Please enter your name");
   const [score, setScore] = useState(0);
+  const [scoreString, setScoreString] = useState("Enter your score here");
   const [dataUserSubmission, setDataUserSubmission] = useState([]);
+  const [accountDeleted, setAccountDeleted] = useState(false);
 
-  useEffect(() => {
-    getUserName();
-    getUserSubmissionData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      getUserName();
+    }, [])
+  );
 
   async function handleSubmitPress() {
     console.log("handleSubmitPress");
@@ -48,7 +53,7 @@ export default function SubmissionScreen() {
 
   async function getUserSubmissionData() {
     try {
-      const response = await api.getUserSubmissionData();
+      const response = await api.getUserSubmissions(name);
       console.log(response.data);
       let dataUserSubmission = response.data;
       setDataUserSubmission(dataUserSubmission);
@@ -65,9 +70,12 @@ export default function SubmissionScreen() {
         setNameString(value);
       }else {
         console.log("No name found");
+        setAccountDeleted(true);
       }
     } catch(e) {
       console.log(e);
+    } finally {
+      getUserSubmissionData();
     }
   }
 
@@ -90,7 +98,35 @@ export default function SubmissionScreen() {
   const animatedScaleStyle = {
       transform: [{scale: animatedButtonScale}],
   };
-
+  if (accountDeleted) {
+    return(
+      <View style={styles.submissionScreen}>
+        <Text style={styles.submissionTitle}>
+          Your account has been deleted.
+        </Text>
+        <Text style={styles.submissionTitle}>
+          In settings:
+        </Text>
+        <Text style={styles.submissionTitle}>
+        1. Click on your ICloud account
+        </Text>
+        <Text style={styles.submissionTitle}>
+        2. Click on Password & Security
+        </Text>
+        <Text style={styles.submissionTitle}>
+        3. Click on Sign in with Apple
+        </Text>
+        <Text style={styles.submissionTitle}>
+        4. Click on ORC Challange
+        </Text>
+        <Text style={styles.submissionTitle}>
+        5. Click on Stop using Apple ID
+        </Text>
+        <Text style={styles.submissionTitle}>
+        Then close the app and sign in again.
+        </Text>
+      </View>
+    )} else {
   return (
     <View style={styles.submissionScreen}>
       <Text style={styles.submissionTitle}>
@@ -111,7 +147,7 @@ export default function SubmissionScreen() {
         <TextInput
           style={styles.scoreInputText}
           keyboardType="numeric"
-          placeholder="Enter your score here"
+          placeholder={scoreString}
           onChangeText={(text) => setScore(parseInt(text, 10) || 0)}
         />
       </View>
@@ -122,6 +158,7 @@ export default function SubmissionScreen() {
       </Animated.View>
     </View>
   );
+    }
 }
 
 const styles = StyleSheet.create({
