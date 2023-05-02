@@ -36,18 +36,32 @@ export default function SubmissionScreen() {
     if (name === "" || score === 0) {
       alert("Please enter your name and score");
     } else {
-      try {
-        const response = await api.postUserSubmissionData({
-          id: 1,
-          name: name,
-          score: score,
-        });
-        Alert.alert(`Success!`, `Your score has been submitted.`);
-        Keyboard.dismiss();
-        setDataUserSubmission({ id: 1, name: name, score: score });
-      } catch (error) {
-        console.log(error.message);
-      }
+      Alert.alert('Submit?', 'You are submiting your score to the public Leaderboard', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Submit Score Cancelled'),
+          style: 'cancel',
+        },
+        {text: 'Yes', onPress: () => {
+          handleConfirmSubmission();
+        }},
+      ]);
+      
+    }
+  }
+
+  async function handleConfirmSubmission() {
+    try {
+      const response = await api.postUserSubmissionData({
+        id: 1,
+        name: name,
+        score: score,
+      });
+      Alert.alert(`Success!`, `Your score has been submitted.`);
+      Keyboard.dismiss();
+      setDataUserSubmission({ id: 1, name: name, score: score });
+    } catch (error) {
+      console.log(error.message);
     }
   }
 
